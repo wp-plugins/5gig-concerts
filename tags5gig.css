@@ -1,0 +1,28 @@
+.widget_box_5gig{background:#fff;text-align:left;border-width:2px 4px;border-color:#efefef;border-style:solid;padding:15px;}
+	.widget_box_5gig_event{margin:15px 0;}
+	.widget_box_5gig .minical{width:40px;float:left;border:1px #efefef solid;text-align:center;margin-right:15px}
+	.widget_box_5gig .month_label{background:red;color:#fff;font-weight:bold;display:block}
+	.widget_box_5gig .day_label{font-size:15px;display:block;}
+	.widget_box_5gig .gig_link{font-size:15px;display:block;margin-bottom:5px}
+	.widget_box_5gig .map{clear:both}
+	.widget_box_5gig b.title{display:block}
+	.widget_box_5gig div.gig_info{float:left;}
+		.widget_box_5gig div.gig_labels{float:left;color:#666}
+		.widget_box_5gig div.gig_details{float:left;padding-left:10px}
+		
+	
+	
+.widget_box_5gig A.button_ticket{
+	text-decoration:none;
+	float:right;
+	background:orange;
+	color:#fff;
+	font-size:14px;padding:5px 15px;font-weight:bold;
+	text-decoration:none;
+	
+	/* borde redonedado */		
+	-moz-border-radius:10px; /* For Mozilla Firefox */
+	-khtml-border-radius:10px; /* For Konqueror */
+	-webkit-border-radius:10px; /* For Safari */
+	border-radius:10px; /* For future native implementations */
+	}

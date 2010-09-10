@@ -1,0 +1,75 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 5gig wp plugin\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Miquel Camps Orteza <gafeman@gmail.com>\n"
+"Language-Team: nvivo.es <miquel@nvivo.es>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: SPAIN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __\n"
+
+msgid "Search gigs"
+msgstr "Cerca concerti"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "%s in %s"
+msgstr "%s a %s"
+
+msgid "Tickets"
+msgstr "Biglietti"
+
+msgid "Time"
+msgstr "Ora"
+
+msgid "Venue"
+msgstr "Sala"
+
+msgid "in"
+msgstr "in"
+
+msgid "Artist"
+msgstr "Artista"
+
+msgid "City"
+msgstr "Città"
+
+msgid "Saved successfully"
+msgstr "Salvato correttamente"
+
+msgid "This code is necessary to query our database"
+msgstr "Il codice è necessario per gestire il nostro database"
+
+msgid "Get an API key"
+msgstr "Richiedi un API key"
+
+msgid "This code is necessary to show a google map of the gigs"
+msgstr "Il codice è necessario per mostrare gli eventi con google maps "
+
+msgid "Add list with upcoming gigs"
+msgstr "Aggiungi lista con i prossimi concerti"
+
+msgid "Click on one of the gigs to add it to your post"
+msgstr "Clicca sull'evento per aggiungerlo al tuo post"
+
+msgid "No results found"
+msgstr "Nessun risultato trovato"
+
+msgid "%s's tickets in %s"
+msgstr "Biglietti %s a %s"
+
+msgid "Configuration"
+msgstr "Configurazione"
+
+msgid "Save changes"
+msgstr "Salvare i cambi"
+
+msgid "Directory %s needs write-access"
+msgstr "Per la directory %s è richiesta un'autorizzazione di scrittura"
+
