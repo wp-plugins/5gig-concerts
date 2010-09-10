@@ -1,4 +1,4 @@
-=== Plugin Name ===
+emo=== Plugin Name ===
 Contributors: miquel_5gig
 Plugin Name: 5gig Concerts
 Plugin URI: http://www.5gig.com/wordpress-plugin/
@@ -25,6 +25,7 @@ You can show either the upcoming concerts of an artist or a venue. Or even the d
 
 Demonstration
 In our blog you can can check many of our posts with the concert information.
+http://www.5gig.co.uk
 
 == Installation ==
 
