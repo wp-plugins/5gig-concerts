@@ -3,7 +3,7 @@
 /*
 Plugin Name: 5gig Concerts
 Plugin URI: http://5gig.com
-Description: Search and show information about concerts
+Description: You can use it to search and seek information about concerts from wordpress editor.
 Version: 1.0
 Author: Miquel Camps Orteza
 Author URI: http://miquelcamps.com/
