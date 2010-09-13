@@ -1,4 +1,4 @@
-emo=== Plugin Name ===
+=== Plugin Name ===
 Contributors: miquel_5gig
 Plugin Name: 5gig Concerts
 Plugin URI: http://www.5gig.com/wordpress-plugin/
