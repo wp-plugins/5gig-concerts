@@ -76,3 +76,5 @@ msgstr "Le répertoire %s a besoin d'autorisations d'écriture"
 msgid "You must enter the 5gig API key"
 msgstr "Vous devez introduire la 5gig API key"
 
+msgid "Show link to get more information about gigs"
+msgstr "Montrer lien afin d'obtenir plus d'information sur les concerts"

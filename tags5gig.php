@@ -20,6 +20,7 @@ function replaceTags5gig($text) {
 		
 	$nvivo_key = get_option('nvivo_key');
 	$maps_api = get_option('maps_api');
+	$show_gigs_info = get_option('show_gigs_info');
 	
 	if( $nvivo_key ){
 	
@@ -114,17 +115,25 @@ function replaceTags5gig($text) {
 						$date = substr( $events->startDate, 11, 5);
 						if( $date == '00:00' ) $date = false;
 	
-
+						$ev_title = sprintf( __('%s in %s', 'tags5gig'), $events->name, $events->venue->location->city );
 						
 						$html .= '<div class="widget_box_5gig widget_box_5gig_event">';
-						if( $events->tickets_url ) $html .= '<a href="' . $events->url . '" class="button_ticket" title="' . sprintf( __('%s in %s', 'tags5gig'), $events->name, $events->venue->location->city ) . '">' . __("Tickets", 'tags5gig') . '</a>';
+						if( $events->tickets_url ) $html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '">' . __("Tickets", 'tags5gig') . '</a>';
 						
 
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div>';
 
 						
 
-						$html .= '<div class="gig_info"><b class="title">' . sprintf( __('%s in %s', 'tags5gig'), $events->name, $events->venue->location->city ) . '</b>';
+						$html .= '<div class="gig_info">';
+						
+						
+						if( $show_gigs_info ){
+							$html .= '<a href="' . $events->url . '" class="title" title="' . $ev_title . '">' . $ev_title . '</a>';
+						}else{
+							$html .= '<b class="title">' . $ev_title . '</b>';
+						}
+
 						
 	
 						$html .= '<div class="gig_labels">';
@@ -163,10 +172,17 @@ function replaceTags5gig($text) {
 	
 						$html .= '<div class="widget_box_5gig" style="' . $css . '">';
 						
-						if( $event->tickets_url ) $html .= '<a href="' . $event->url . '" class="button_ticket" title="' . sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city ) . '">' . __("Tickets", 'tags5gig') . '</a>';
+						$ev_title = sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city );
+						
+						if( $event->tickets_url ) $html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '">' . __("Tickets", 'tags5gig') . '</a>';
 						
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div><div>';
-						$html .= '<b class="title">' . sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city ) . '</b>';
+						
+						if( $show_gigs_info ){
+							$html .= '<a href="' . $event->url . '" class="title" title="' . $ev_title . '">' . $ev_title . '</a>';
+						}else{
+							$html .= '<b class="title">' . $ev_title . '</b>';
+						}
 						
 						$html .= $event->venue->name;
 						$html .= '</div></div>';
@@ -251,6 +267,7 @@ function modify_menu_tags5gig(){
 
 function set_tags5gig_options(){
 	add_option('nvivo_key','');
+	add_option('show_gigs_info','1');
 }
 
 function unset_tags5gig_options(){
@@ -262,6 +279,7 @@ function update_tags5gig_options(){
 	if( count( $_POST ) ){
 		update_option('nvivo_key', $_REQUEST['nvivo_key']);
 		update_option('maps_api', $_REQUEST['maps_api']);
+		update_option('show_gigs_info', $_REQUEST['show_gigs_info']);
 	}
 
 	?><div id="message" class="updated fade"><p><?=__("Saved successfully", 'tags5gig')?></p></div>
@@ -304,6 +322,9 @@ function admin_tags5gig_options(){
 	if( $_REQUEST['submit'] )
 		update_tags5gig_options();
 	
+	
+	$show_gigs_info = get_option('show_gigs_info');
+	
 ?>
 <div class="wrap"><h2><?=__('Configuration', 'tags5gig')?></h2>
 
@@ -323,7 +344,14 @@ function admin_tags5gig_options(){
 	<b>google API key</b><br/>
 	<?=__('This code is necessary to show a google map of the gigs', 'tags5gig')?>
 	<br/><br/>
-	<input size="40" name="maps_api" value="<?=get_option('maps_api')?>"/> <a href="http://code.google.com/intl/es/apis/maps/signup.html" target="_blank"><?=__('Get an API key', 'tags5gig')?></a><br/><br/><br/>
+	<input size="40" name="maps_api" value="<?=get_option('maps_api')?>"/> <a href="http://code.google.com/intl/es/apis/maps/signup.html" target="_blank"><?=__('Get an API key', 'tags5gig')?></a>
+	
+	<br/><br/><br/>
+	
+	<label for="show_gigs_info"><input name="show_gigs_info" id="show_gigs_info" value="1" type="checkbox" <?php if($show_gigs_info): ?>checked="checked"<?php endif?>/> <?=__('Show link to get more information about gigs', 'tags5gig')?></label>
+	
+	<br/><br/><br/>
+	
 	<input type="submit" name="submit" class="button" value="<?=__('Save changes', 'tags5gig')?>"/>
 </form>
 

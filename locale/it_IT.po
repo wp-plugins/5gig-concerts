@@ -76,3 +76,6 @@ msgstr "Per la directory %s è richiesta un'autorizzazione di scrittura"
 msgid "You must enter the 5gig API key"
 msgstr "Vous devez introduire la 5gig API key"
 
+msgid "Show link to get more information about gigs"
+msgstr "Visualizzare il link per ottenere più informazione sui concerti"
+
