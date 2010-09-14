@@ -4,11 +4,11 @@ Plugin Name: 5gig Concerts
 Plugin URI: http://www.5gig.com/wordpress-plugin/
 Tags: concerts, gigs, music, artists, venues
 Author URI: http://www.5gig.com/
-Author: Miquel Camps Orteza
+Author: nvivo internet S.L
 Requires at least: 2.7
 Tested up to: 3.01
-Stable tag: 1.0
-Version: 1.0 
+Stable tag: 1.1
+Version: 1.1 
 
 You can use it to search and seek information about concerts from wordpress editor.
 
