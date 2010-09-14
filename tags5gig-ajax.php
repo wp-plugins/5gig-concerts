@@ -24,7 +24,7 @@ $domain = get5gigDomain( $lang );
 
   	 		
 	  	 	$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=artist.getEvents&artist=' . urlencode( $_GET['search'] ) . '&country_iso=' . $lang;
-  	 		$xml = simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
+  	 		$xml = @simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
 
 
 
@@ -58,7 +58,7 @@ $domain = get5gigDomain( $lang );
 	 		
 		  	case 2:
   	 		$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.find&venue_name=' . urlencode( $_GET['search'] ) . '&country_iso=' . $lang;
-  	 		$xml = simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
+  	 		$xml = @simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
 
   	 		if( strstr($xml->error, "No venues") ){
   	 			
@@ -93,7 +93,7 @@ $domain = get5gigDomain( $lang );
 
   	 		
   	 		$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=city.getEvents&city=' . urlencode( $_GET['search'] ) . '&country_iso=' . $lang;
-  	 		$xml = simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
+  	 		$xml = @simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
 
   	 		if( strstr($xml->error, "doesn't exist") ){
   	 			die( __("No results found", 'tags5gig') );
@@ -129,7 +129,7 @@ $domain = get5gigDomain( $lang );
 
 			case 4:
   	 		$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.getEvents&venue_id=' . urlencode( $_GET['search'] ) . '&country_iso=' . $lang;
-  	 		$xml = simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
+  	 		$xml = @simplexml_load_file( $url, 'SimpleXMLElement', LIBXML_NOCDATA );
 
   	 		if( strstr($xml->error, "doesn't exist") ){
   	 			die('la sala no existe');

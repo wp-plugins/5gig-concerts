@@ -73,3 +73,6 @@ msgstr "Enregistrer les changements"
 msgid "Directory %s needs write-access"
 msgstr "Le répertoire %s a besoin d'autorisations d'écriture"
 
+msgid "You must enter the 5gig API key"
+msgstr "Vous devez introduire la 5gig API key"
+

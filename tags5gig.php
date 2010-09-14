@@ -3,14 +3,14 @@
 /*
 Plugin Name: 5gig Concerts
 Plugin URI: http://5gig.com
-Description: You can use it to search and seek information about concerts from wordpress editor.
+Description: Search and show information about concerts
 Version: 1.0
 Author: Miquel Camps Orteza
 Author URI: http://miquelcamps.com/
 */
 
-$tags5gig_url = get_settings('home')."/wp-content/plugins/5gigconcerts";	//URL to the plugin directory
 $tags5gig_dir = dirname(__FILE__);	//path to the plugin directory
+$tags5gig_url = get_bloginfo('wpurl')."/wp-content/plugins/" . basename($tags5gig_dir);	//URL to the plugin directory
 $tags5gig_cache_dir = $tags5gig_dir . '/cache/';	//path to the plugin directory
 
 require $tags5gig_dir . '/tags5gig-functions.php';
@@ -117,7 +117,7 @@ function replaceTags5gig($text) {
 
 						
 						$html .= '<div class="widget_box_5gig widget_box_5gig_event">';
-						if( $events->tickets_url ) $html .= '<a href="' . $events->url . '" class="button_ticket">' . __("Tickets", 'tags5gig') . '</a>';
+						if( $events->tickets_url ) $html .= '<a href="' . $events->url . '" class="button_ticket" title="' . sprintf( __('%s in %s', 'tags5gig'), $events->name, $events->venue->location->city ) . '">' . __("Tickets", 'tags5gig') . '</a>';
 						
 
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div>';
@@ -163,7 +163,7 @@ function replaceTags5gig($text) {
 	
 						$html .= '<div class="widget_box_5gig" style="' . $css . '">';
 						
-						if( $event->tickets_url ) $html .= '<a href="' . $event->url . '" class="button_ticket">' . __("Tickets", 'tags5gig') . '</a>';
+						if( $event->tickets_url ) $html .= '<a href="' . $event->url . '" class="button_ticket" title="' . sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city ) . '">' . __("Tickets", 'tags5gig') . '</a>';
 						
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div><div>';
 						$html .= '<b class="title">' . sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city ) . '</b>';
@@ -185,7 +185,20 @@ function tags5gig_header(){
 }
 
 function draw_tags5gig() {
+global $tags5gig_dir;
+
+
+$nvivo_key = get_option('nvivo_key');
+
+if( $nvivo_key ):
+
 ?>
+
+
+
+
+
+
 
 <input type="text" id="tags5gig-search" name="tags5gig-search" size="17" autocomplete="off" />
 <?=__("en", 'tags5gig')?>: 
@@ -206,6 +219,20 @@ function draw_tags5gig() {
 <input name="tags5gig-radio" id="op_city" type="radio" value="3"/><label for="op_city"> <?=__("City", 'tags5gig')?> </label> <br /><br /><br />
 
 <div id="tags5gig-results"></div>
+
+<?php
+else:
+
+?>
+
+<a href="<?=get_bloginfo('wpurl')?>/wp-admin/options-general.php?page=<?=basename($tags5gig_dir)?>/tags5gig.php" style="color:red"><?=__("You must enter the 5gig API key", 'tags5gig')?></a>
+
+<?php
+
+endif
+
+?>
+
 
 <style>
 #tags5gig-results TD{padding:5px 20px 5px 0;border-bottom:1px #efefef solid}
@@ -279,6 +306,8 @@ function admin_tags5gig_options(){
 	
 ?>
 <div class="wrap"><h2><?=__('Configuration', 'tags5gig')?></h2>
+
+
 <br/>
 <form method="post">
 	<?php if( !is_writable( $tags5gig_cache_dir ) ): ?>
@@ -299,6 +328,9 @@ function admin_tags5gig_options(){
 </form>
 
 <?php
+
+
+
 }
 
 register_activation_hook(__FILE__,'set_tags5gig_options');
