@@ -5,7 +5,7 @@
 	.widget_box_5gig .day_label{font-size:15px;display:block;}
 	.widget_box_5gig .gig_link{font-size:15px;display:block;margin-bottom:5px}
 	.widget_box_5gig .map{clear:both}
-	.widget_box_5gig .title{display:block}
+	.widget_box_5gig .title{display:block;font-weight:bold}
 	.widget_box_5gig div.gig_info{float:left;}
 		.widget_box_5gig div.gig_labels{float:left;color:#666}
 		.widget_box_5gig div.gig_details{float:left;padding-left:10px}
