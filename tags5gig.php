@@ -37,7 +37,7 @@ function replaceTags5gig($text) {
 				if( !$nvivo_cou ) $nvivo_cou = 'ES';
 				
 				$domain = get5gigDomain( $nvivo_cou );
-				$cache_id = md5( $mode . '-' . $id );
+				$cache_id = md5( $mode . '-' . $id . '-' . $nvivo_cou );
 
 					
 					switch( $mode ){
