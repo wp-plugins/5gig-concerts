@@ -7,8 +7,8 @@ Author URI: http://www.5gig.com/
 Author: nvivo internet S.L
 Requires at least: 2.7
 Tested up to: 3.01
-Stable tag: 1.1
-Version: 1.1 
+Stable tag: 1.2
+Version: 1.2 
 
 You can use it to search and seek information about concerts from wordpress editor.
 
