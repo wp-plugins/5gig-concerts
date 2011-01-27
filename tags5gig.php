@@ -9,8 +9,14 @@ Author: Miquel Camps Orteza
 Author URI: http://miquelcamps.com/
 */
 
+
 $tags5gig_dir = dirname(__FILE__);	//path to the plugin directory
-$tags5gig_url = get_bloginfo('wpurl')."/wp-content/plugins/" . basename($tags5gig_dir);	//URL to the plugin directory
+
+
+$domain = 'http://' . current(explode( '/', str_replace('http://','', get_bloginfo('wpurl') )));
+$tags5gig_url = get_bloginfo('wpurl') . "/wp-content/plugins/" . basename($tags5gig_dir);	//URL to the plugin directory
+$tags5gig_url = str_replace($domain, '', $tags5gig_url);
+
 $tags5gig_cache_dir = $tags5gig_dir . '/cache/';	//path to the plugin directory
 
 require $tags5gig_dir . '/tags5gig-functions.php';
@@ -39,62 +45,55 @@ function replaceTags5gig($text) {
 				$domain = get5gigDomain( $nvivo_cou );
 				$cache_id = md5( $mode . '-' . $id . '-' . $nvivo_cou );
 
+				switch( $mode ){
 					
-					switch( $mode ){
+					case 'event':
+						$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=event.getEvent&id=' . $id . '&country_iso=' . $nvivo_cou . '&format=xml';
+						$xml = tags5gig_getcache( $cache_id, $url );
+						$xml = str_replace('geo:', 'geo', $xml);
+						$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
+						if( isset( $xml->event ) ) $events = $xml->event;
+						break;
 						
-						case 'event':
-							$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=event.getEvent&id=' . $id . '&country_iso=' . $nvivo_cou . '&format=xml';
-							$xml = tags5gig_getcache( $cache_id, $url );
+					case 'artist':
+						$id = str_replace('&amp;', '&', $id);
+						$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=artist.getEvents&artist=' . urlencode( $id ) . '&country_iso=' . $nvivo_cou . '&format=xml';
+						$xml = tags5gig_getcache( $cache_id, $url );
+						$xml = str_replace('geo:', 'geo', $xml);
+						$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
+						if( isset( $xml->events->event ) ) $events = $xml->events->event;
+						break;
+						
+					case 'venue':
+						$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.get&venue_id=' . urlencode( $id ) . '&format=xml';
+						$xml = tags5gig_getcache( $cache_id, $url );
+						$xml = str_replace('geo:', 'geo', $xml);
+						$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
+						$venue = $xml->venue;
+						if( $venue ){
+							$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.getEvents&venue_id=' . urlencode( $id ) . '&format=xml';
+							$xml = file_get_contents( $url );
 							$xml = str_replace('geo:', 'geo', $xml);
-							//$xml = str_replace(array('<![CDATA[', ']]>'), '', $xml);
 							$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
-							if( isset( $xml->event ) ) $events = $xml->event;
-							break;
-							
-						case 'artist':
-							$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=artist.getEvents&artist=' . urlencode( $id ) . '&country_iso=' . $nvivo_cou . '&format=xml';
-
-							
-							$xml = tags5gig_getcache( $cache_id, $url );
-							$xml = str_replace('geo:', 'geo', $xml);
-							//$xml = str_replace(array('<![CDATA[', ']]>'), '', $xml);
-							$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
-							if( isset( $xml->events->event ) ) $events = $xml->events->event;
-							break;
-							
-						case 'venue':
-							$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.get&venue_id=' . urlencode( $id ) . '&format=xml';
-							$xml = tags5gig_getcache( $cache_id, $url );
-							$xml = str_replace('geo:', 'geo', $xml);
-							//$xml = str_replace(array('<![CDATA[', ']]>'), '', $xml);
-							$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
-							$venue = $xml->venue;
-							if( $venue ){
-								$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=venue.getEvents&venue_id=' . urlencode( $id ) . '&format=xml';
-								$xml = file_get_contents( $url );
-								$xml = str_replace('geo:', 'geo', $xml);
-								//$xml = str_replace(array('<![CDATA[', ']]>'), '', $xml);
-								$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
-								if( isset( $xml->events->event ) ){
-									$events = $xml->events->event;
-									for( $k = 0; $k < count( $events ); $k++ ){
-										$events[$k]->venue->name = $venue->name;
-										$events[$k]->venue->location->city = $venue->location->city;
-									}							
-								}
+							if( isset( $xml->events->event ) ){
+								$events = $xml->events->event;
+								for( $k = 0; $k < count( $events ); $k++ ){
+									$events[$k]->venue->name = (string) $venue->name;
+									$events[$k]->venue->location->city = (string) $venue->location->city;
+								}							
 							}
-							break;
-							
-						case 'city':
-							$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=city.getEvents&city=' . urlencode( $id ) . '&country_iso=' . $nvivo_cou . '&format=xml';
-							$xml = tags5gig_getcache( $cache_id, $url );
-							$xml = str_replace('geo:', 'geo', $xml);
-							//$xml = str_replace(array('<![CDATA[', ']]>'), '', $xml);
-							$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
-							if( isset( $xml->events->event ) ) $events = $xml->events->event;
-							break;
-							
-					}
+						}
+						break;
+						
+					case 'city':
+						$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=city.getEvents&city=' . urlencode( $id ) . '&country_iso=' . $nvivo_cou . '&format=xml';
+						$xml = tags5gig_getcache( $cache_id, $url );
+						$xml = str_replace('geo:', 'geo', $xml);
+						$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
+						if( isset( $xml->events->event ) ) $events = $xml->events->event;
+						break;
+						
+				}
 					
 
 				
@@ -118,7 +117,27 @@ function replaceTags5gig($text) {
 						$ev_title = sprintf( __('%s in %s', 'tags5gig'), $events->name, $events->venue->location->city );
 						
 						$html .= '<div class="widget_box_5gig widget_box_5gig_event">';
-						if( $events->tickets_url ) $html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '">' . __("Tickets", 'tags5gig') . '</a>';
+
+						
+						
+				
+						
+						if( isset( $events->tickets->ticket[0]->tracking_url ) ){
+							$secundario = false;
+							$html .= '<div class="op_ticket">';
+							$html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $events->id . ')">' . __("Tickets", 'tags5gig') . '</a>';
+							$html .= '<div id="tickets_results_' . $events->id . '" class="box_tickets">';
+							foreach( $events->tickets->ticket as $ticket){
+								$mercado = $ticket->attributes()->market;
+								if( $mercado == 1 && !$secundario ){
+									if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
+									$secundario = true;
+								}
+								if( $ticket->ticket_vendor ) $html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
+							}							
+							$html .= '</div>';
+							$html .= '</div>';
+						}
 						
 
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div>';
@@ -174,7 +193,22 @@ function replaceTags5gig($text) {
 						
 						$ev_title = sprintf( __('%s in %s', 'tags5gig'), $event->name, $event->venue->location->city );
 						
-						if( $event->tickets_url ) $html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '">' . __("Tickets", 'tags5gig') . '</a>';
+						if( isset( $event->tickets->ticket[0]->tracking_url ) ){
+							$secundario = false;
+							$html .= '<div class="op_ticket">';
+							$html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $event->id . ')">' . __("Tickets", 'tags5gig') . '</a>';
+							$html .= '<div id="tickets_results_' . $event->id . '" class="box_tickets">';
+							foreach( $event->tickets->ticket as $ticket){
+								$mercado = $ticket->attributes()->market;
+								if( $mercado == 1 && !$secundario ){
+									if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
+									$secundario = true;
+								}
+								$html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
+							}							
+							$html .= '</div>';
+							$html .= '</div>';
+						}
 						
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div><div>';
 						
@@ -197,11 +231,16 @@ function replaceTags5gig($text) {
 
 function tags5gig_header(){
 	global $tags5gig_url;
+	//wp_enqueue_script('jquery');
+    echo "<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" ></script>\n";
+    echo "<script type=\"text/javascript\" src=\"{$tags5gig_url}/js/tags5gig.js\" ></script>\n";
+    echo "<script>var tags5gig_plugin_path = '{$tags5gig_url}'</script>\n";
+	
+	//wp_enqueue_script('tags5gig', $tags5gig_url.'/js/tags5gig.js', array('jquery'));
 	echo "<link rel=\"stylesheet\" href=\"{$tags5gig_url}/tags5gig.css\" type=\"text/css\" media=\"all\" />\n";
 }
 
 function draw_tags5gig() {
-global $tags5gig_dir;
 
 
 $nvivo_key = get_option('nvivo_key');
@@ -287,9 +326,9 @@ function update_tags5gig_options(){
 }
 
 function scripts_action(){
-	global $tags5gig_url;
+	global $tags5gig_url, $domain;
 	wp_enqueue_script('jquery');		 	
-	wp_enqueue_script('tags5gig', $tags5gig_url.'/js/tags5gig.js', array('jquery'));
+	wp_enqueue_script('tags5gig', $domain.$tags5gig_url.'/js/tags5gig.js', array('jquery'));
 	wp_localize_script('tags5gig', 'tags5gigSettings', array('tags5gig_url' => $tags5gig_url)); 	
 }
 
@@ -309,9 +348,10 @@ function tags5gig_getcache( $id, $url ){
 		$xml = file_get_contents( $cache_dir );
 	}else{
 		$xml = file_get_contents( $url );
-		$handler = fopen($cache_dir, 'w');
-		fwrite($handler, $xml );
-		fclose($handler);
+		if( $handler = fopen($cache_dir, 'w') ){
+			fwrite($handler, $xml );
+			fclose($handler);
+		}
 	}
 	return $xml;
 }

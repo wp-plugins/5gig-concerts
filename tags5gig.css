@@ -9,12 +9,14 @@
 	.widget_box_5gig div.gig_info{float:left;}
 		.widget_box_5gig div.gig_labels{float:left;color:#666}
 		.widget_box_5gig div.gig_details{float:left;padding-left:10px}
-		
+		.widget_box_5gig .box_tickets B{font-weight:normal;border-top:1px #efefef solid;padding-top:10px;display:block;margin-top:10px;margin-bottom:5px;color:#666}
+		.widget_box_5gig .box_tickets A{display:block}
 	
+	
+.widget_box_5gig DIV.op_ticket{float:right;}
 	
 .widget_box_5gig A.button_ticket{
 	text-decoration:none;
-	float:right;
 	background:orange;
 	color:#fff;
 	font-size:14px;padding:5px 15px;font-weight:bold;
@@ -26,3 +28,7 @@
 	-webkit-border-radius:10px; /* For Safari */
 	border-radius:10px; /* For future native implementations */
 	}
+
+.widget_box_5gig .box_tickets{margin-left:-10px;margin-top:5px;position:absolute;display:none;padding:5px;border:1px #666 solid;background:#fff;}
+	#content .widget_box_5gig .box_tickets A{text-decoration:none}
+	#content .widget_box_5gig .box_tickets A:HOVER{text-decoration:underline}
