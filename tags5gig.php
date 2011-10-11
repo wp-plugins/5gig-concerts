@@ -110,6 +110,7 @@ function replaceTags5gig($text) {
 						$timestamp = strtotime( $events->startDate );
 						$dia = date('d', $timestamp);
 						$mes = strftime( '%b', $timestamp );
+						$year = date('Y', $timestamp);
 						
 						$date = substr( $events->startDate, 11, 5);
 						if( $date == '00:00' ) $date = false;
@@ -125,7 +126,7 @@ function replaceTags5gig($text) {
 						if( isset( $events->tickets->ticket[0]->tracking_url ) ){
 							$secundario = false;
 							$html .= '<div class="op_ticket">';
-							$html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $events->id . ')">' . __("Tickets", 'tags5gig') . '</a>';
+							$html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $events->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
 							$html .= '<div id="tickets_results_' . $events->id . '" class="box_tickets">';
 							foreach( $events->tickets->ticket as $ticket){
 								$mercado = $ticket->attributes()->market;
@@ -140,15 +141,14 @@ function replaceTags5gig($text) {
 						}
 						
 
-						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div>';
+						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b><b style="font-size:12px;">' . $year. '</b></div>';
 
 						
-
 						$html .= '<div class="gig_info">';
 						
 						
 						if( $show_gigs_info ){
-							$html .= '<a href="' . $events->url . '" class="title" title="' . $ev_title . '">' . $ev_title . '</a>';
+							$html .= '<a href="' . $events->url . '" class="title" title="' . $ev_title . '" target="_blank">' . $ev_title . '</a>';
 						}else{
 							$html .= '<b class="title">' . $ev_title . '</b>';
 						}
@@ -196,7 +196,7 @@ function replaceTags5gig($text) {
 						if( isset( $event->tickets->ticket[0]->tracking_url ) ){
 							$secundario = false;
 							$html .= '<div class="op_ticket">';
-							$html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $event->id . ')">' . __("Tickets", 'tags5gig') . '</a>';
+							$html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $event->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
 							$html .= '<div id="tickets_results_' . $event->id . '" class="box_tickets">';
 							foreach( $event->tickets->ticket as $ticket){
 								$mercado = $ticket->attributes()->market;
@@ -213,7 +213,7 @@ function replaceTags5gig($text) {
 						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div><div>';
 						
 						if( $show_gigs_info ){
-							$html .= '<a href="' . $event->url . '" class="title" title="' . $ev_title . '">' . $ev_title . '</a>';
+							$html .= '<a href="' . $event->url . '" class="title" title="' . $ev_title . '" target="_blank">' . $ev_title . '</a>';
 						}else{
 							$html .= '<b class="title">' . $ev_title . '</b>';
 						}
@@ -232,7 +232,7 @@ function replaceTags5gig($text) {
 function tags5gig_header(){
 	global $tags5gig_url;
 	//wp_enqueue_script('jquery');
-    echo "<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" ></script>\n";
+    //echo "<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" ></script>\n";
     echo "<script type=\"text/javascript\" src=\"{$tags5gig_url}/js/tags5gig.js\" ></script>\n";
     echo "<script>var tags5gig_plugin_path = '{$tags5gig_url}'</script>\n";
 	
