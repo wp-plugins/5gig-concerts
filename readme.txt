@@ -6,9 +6,9 @@ Tags: concerts, gigs, music, artists, venues
 Author URI: http://www.5gig.com/
 Author: nvivo internet S.L
 Requires at least: 2.7
-Tested up to: 3.01
-Stable tag: 1.2
-Version: 1.2
+Tested up to: 3.5.1
+Stable tag: 1.3
+Version: 1.3
 
 You can use it to search and seek information about concerts from wordpress editor.
 
@@ -54,5 +54,8 @@ http://code.google.com/intl/es-ES/apis/maps/signup.html
 
 = 1.0 (September 10, 2010) =
 First version of the plugin
+= 1.3 (June, 2013) =
+Security fixes
+
 
 == Frequently Asked Questions ==
