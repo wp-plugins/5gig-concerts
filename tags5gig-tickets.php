@@ -21,7 +21,7 @@ function url_get_contents($url, $timeout=30)
 	return $response;
 }
 
-$id = (int)$_GET['id'];
+$id = intval($_GET['id']);
 echo url_get_contents('http://www.nvivo.es/AJAX/getTickets.php?id=' . $id);
 
 ?>

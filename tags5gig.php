@@ -5,8 +5,8 @@ Plugin Name: 5gig Concerts
 Plugin URI: http://5gig.com
 Description: Search and show information about concerts
 Version: 1.2
-Author: Miquel Camps Orteza
-Author URI: http://miquelcamps.com/
+Author: nvivo Internet S.L
+Author URI: http://www.5gig.com/
 */
 
 
@@ -20,6 +20,7 @@ $tags5gig_url = str_replace($domain, '', $tags5gig_url);
 $tags5gig_cache_dir = $tags5gig_dir . '/cache/';	//path to the plugin directory
 
 require $tags5gig_dir . '/tags5gig-functions.php';
+require $tags5gig_dir . '/tags5gig-ajax.php';
 
 function replaceTags5gig($text) {
 	global $tags5gig_dir, $tags5gig_cache_dir;
@@ -36,14 +37,20 @@ function replaceTags5gig($text) {
 				$events = array();
 				$mode = $matches[1][$i];
 				$t_id = explode(':', $matches[2][$i]);
+				
 				$id = $t_id[0];
 				$nvivo_cou = $t_id[1];
+				
+				if (isset($t_id[2])) $date_filter = trim($t_id[2]); 
 				
 				if( !$id ) $id = $matches[2][$i];
 				if( !$nvivo_cou ) $nvivo_cou = 'ES';
 				
 				$domain = get5gigDomain( $nvivo_cou );
-				$cache_id = md5( $mode . '-' . $id . '-' . $nvivo_cou );
+				$cache_id = md5( $mode . '-' . $id . '-' . $nvivo_cou);
+				
+				if (isset($date_filter))
+				    $cache_id = md5( $mode . '-' . $id . '-' . $nvivo_cou . '-' . $date_filter);
 
 				switch( $mode ){
 					
@@ -56,12 +63,22 @@ function replaceTags5gig($text) {
 						break;
 						
 					case 'artist':
-						$id = str_replace('&amp;', '&', $id);
+						$id = str_replace('&amp;', '&', $id); 
 						$url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=artist.getEvents&artist=' . urlencode( $id ) . '&country_iso=' . $nvivo_cou . '&format=xml';
-						$xml = tags5gig_getcache( $cache_id, $url );
+						
+						if ($nvivo_cou == 'ALL')
+						    $url = $domain . '/api/request.php?api_key=' . $nvivo_key . '&method=artist.getEvents&artist=' . urlencode( $id ) .'&format=xml';
+						//$date_filter = mb_substr($date_filter,1,strlen($date_filter));
+						if ($date_filter) $url .= '&after='.$date_filter;
+						unset($date_filter);
+
+						$xml = tags5gig_getcache( $cache_id, $url);
+						//$xml = file_get_contents($url.'&yeah=20');
 						$xml = str_replace('geo:', 'geo', $xml);
 						$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA );
+						
 						if( isset( $xml->events->event ) ) $events = $xml->events->event;
+						
 						break;
 						
 					case 'venue':
@@ -126,17 +143,25 @@ function replaceTags5gig($text) {
 						if( isset( $events->tickets->ticket[0]->tracking_url ) ){
 							$secundario = false;
 							$html .= '<div class="op_ticket">';
-							$html .= '<a href="' . $events->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $events->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
-							$html .= '<div id="tickets_results_' . $events->id . '" class="box_tickets">';
-							foreach( $events->tickets->ticket as $ticket){
-								$mercado = $ticket->attributes()->market;
-								if( $mercado == 1 && !$secundario ){
-									if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
-									$secundario = true;
-								}
-								if( $ticket->ticket_vendor ) $html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
-							}							
-							$html .= '</div>';
+							
+							if ($event->cancelled == 0)
+							{
+							  $html .= '<a href="' . $events->url . '#tickets" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $events->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
+							  // $html .= '<div id="tickets_results_' . $events->id . '" class="box_tickets">';
+							  // foreach( $events->tickets->ticket as $ticket){
+								 //  $mercado = $ticket->attributes()->market;
+								 //  if( $mercado == 1 && !$secundario ){
+									//   if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
+									//   $secundario = true;
+								 //  }
+								 //  if( $ticket->ticket_vendor ) $html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
+							  // }							
+							  //$html .= '</div>';
+							}
+							else
+							{
+							  $html .= '<a class="button_ticket" style="background-color:red;">' . __("Cancelled", 'tags5gig') . '</a>'; 
+							}
 							$html .= '</div>';
 						}
 						
@@ -188,6 +213,7 @@ function replaceTags5gig($text) {
 						$timestamp = strtotime( $event->startDate );
 						$dia = date('d', $timestamp);
 						$mes = strftime( '%b', $timestamp );
+						$year = date('Y', $timestamp);
 	
 						$html .= '<div class="widget_box_5gig" style="' . $css . '">';
 						
@@ -195,22 +221,33 @@ function replaceTags5gig($text) {
 						
 						if( isset( $event->tickets->ticket[0]->tracking_url ) ){
 							$secundario = false;
+							
+
 							$html .= '<div class="op_ticket">';
-							$html .= '<a href="' . $event->tickets_url . '" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $event->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
-							$html .= '<div id="tickets_results_' . $event->id . '" class="box_tickets">';
-							foreach( $event->tickets->ticket as $ticket){
-								$mercado = $ticket->attributes()->market;
-								if( $mercado == 1 && !$secundario ){
-									if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
-									$secundario = true;
-								}
-								$html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
-							}							
+						      
+							if ($event->cancelled == 0)
+							{	
+							  $html .= '<a href="' . $event->url . '#tickets" class="button_ticket" title="' . $ev_title . '" onclick="return getTickets(' . $event->id . ')" target="_blank">' . __("Tickets", 'tags5gig') . '</a>';
+							  // $html .= '<div id="tickets_results_' . $event->id . '" class="box_tickets">';
+							  // foreach( $event->tickets->ticket as $ticket){
+								 //  $mercado = $ticket->attributes()->market;
+								 //  if( $mercado == 1 && !$secundario ){
+									//   if( $ticket->ticket_vendor ) $html .= '<b>' . __("Other tickets", 'tags5gig') . '</b>';
+									//   $secundario = true;
+								 //  }
+								 //  $html .= '<a href="' . $ticket->tracking_url . '" target="_blank">' . $ticket->price . ' ' . $ticket->price->attributes()->currency . ' - ' . $ticket->ticket_vendor . '</a>';
+							  // }							
+							  // $html .= '</div>';
+							}
+							else
+							{
+							     $html .= '<a class="button_ticket" style="background-color:red;">' . __("Cancelled", 'tags5gig') . '</a>';
+							}
 							$html .= '</div>';
-							$html .= '</div>';
+							
 						}
 						
-						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b></div><div>';
+						$html .= '<div class="minical"><span class="month_label">' . $mes . '</span><b class="day_label">' . $dia . '</b><b style="font-size:12px;">' . $year. '</b></div><br><div>';
 						
 						if( $show_gigs_info ){
 							$html .= '<a href="' . $event->url . '" class="title" title="' . $ev_title . '" target="_blank">' . $ev_title . '</a>';
@@ -233,7 +270,7 @@ function tags5gig_header(){
 	global $tags5gig_url;
 	//wp_enqueue_script('jquery');
     //echo "<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\" ></script>\n";
-    echo "<script type=\"text/javascript\" src=\"{$tags5gig_url}/js/tags5gig.js\" ></script>\n";
+    //echo "<script type=\"text/javascript\" src=\"{$tags5gig_url}/js/tags5gig.js\" ></script>\n";
     echo "<script>var tags5gig_plugin_path = '{$tags5gig_url}'</script>\n";
 	
 	//wp_enqueue_script('tags5gig', $tags5gig_url.'/js/tags5gig.js', array('jquery'));
@@ -267,6 +304,11 @@ if( $nvivo_key ):
 	<option value="NL">Netherlands</option>
 	<option value="AT">Austria</option>
 	<option value="BE">Belgium</option>
+	<option value="AU">Australia</option>
+	<option value="BR">Brazil</option>
+	<option value="CA">Canada</option>
+	<option value="NZ">New Zealand</option>
+	<option value="all">ALL</option>
 </select>
 <input id="tags5gig-submit" class="button" type="button" value="<?=__("Search", 'tags5gig')?>"  /> <br /><br />
 <input name="tags5gig-radio" id="op_artist" type="radio" checked="" value="1" /><label for="op_artist"> <?=__("Artist", 'tags5gig')?> </label>
@@ -329,7 +371,7 @@ function scripts_action(){
 	global $tags5gig_url, $domain;
 	wp_enqueue_script('jquery');		 	
 	wp_enqueue_script('tags5gig', $domain.$tags5gig_url.'/js/tags5gig.js', array('jquery'));
-	wp_localize_script('tags5gig', 'tags5gigSettings', array('tags5gig_url' => $tags5gig_url)); 	
+	wp_localize_script('tags5gig', 'tags5gigSettings', array('tags5gig_url' => $tags5gig_url,'ajax_url'=>admin_url('admin-ajax.php'))); 	
 }
 
 function tags5gig_init_locale(){
@@ -344,7 +386,7 @@ function tags5gig_getcache( $id, $url ){
 	global $tags5gig_cache_dir;
 	$cache_dir = $tags5gig_cache_dir . $id;
 	
-	if( file_exists( $cache_dir ) && time() < ( filemtime( $cache_dir ) + ( 3600 * 24 )	) ){ // cache 1 dias
+	if( file_exists( $cache_dir ) && time() < ( filemtime( $cache_dir ) + ( 3600)	) ){ // cache 1 dias
 		$xml = file_get_contents( $cache_dir );
 	}else{
 		$xml = file_get_contents( $url );
@@ -355,6 +397,7 @@ function tags5gig_getcache( $id, $url ){
 	}
 	return $xml;
 }
+
 
 function admin_tags5gig_options(){
 	global $tags5gig_dir, $tags5gig_cache_dir;
@@ -398,7 +441,6 @@ function admin_tags5gig_options(){
 <?php
 
 
-
 }
 
 register_activation_hook(__FILE__,'set_tags5gig_options');
@@ -412,5 +454,7 @@ add_action('admin_print_scripts-post.php', 'scripts_action');
 add_action('admin_print_scripts-page.php', 'scripts_action');
 add_action('admin_print_scripts-post-new.php', 'scripts_action');
 add_action('admin_print_scripts-page-new.php', 'scripts_action');
+
+add_action('wp_ajax_tags5gig_ajax','tags5gig_ajax');
 
 ?>

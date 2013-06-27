@@ -1,15 +1,7 @@
 // tags5gig for WordPress plugin
 function getTickets(id){
 	obj = $('#tickets_results_'+id);
-	/*
-	if( !$(obj).html() ){	
-		$.ajax({ url: tags5gig_plugin_path + '/tags5gig-tickets.php?id='+id, type: "GET", dataType: "text/html",  success: function(data){
-			obj.html(data).slideToggle('fast');
-	    }});
-    }else{
-    	$(obj).slideToggle('fast');
-    }
-    */
+
     $(obj).slideToggle('fast');
     return false;
 }
@@ -51,12 +43,13 @@ jQuery(document).ready(function($) {
         var apiParams = {
 			search: phrase,
 			mode: mode,
-			lang: lang
+			lang: lang,
+			action: 'tags5gig_ajax'
 			};
 	     
         $.ajax({
 			type: "GET",
-			url: tags5gigSettings.tags5gig_url + "/tags5gig-ajax.php",
+			url: tags5gigSettings.ajax_url,
 			data: apiParams,
 			datatype: "string",
 			error: function() {
@@ -102,12 +95,13 @@ jQuery(document).ready(function($) {
 		var apiParams = {
 			search: id,
 			mode: mode,
-			lang: lang
+			lang: lang,
+			action: 'tags5gig_ajax'
 		};
 		     
 		$.ajax({
 			type: "GET",
-			url: tags5gigSettings.tags5gig_url + "/tags5gig-ajax.php",
+			url: tags5gigSettings.ajax_url,
 			data: apiParams,
 			datatype: "string",
 			error: function() {
