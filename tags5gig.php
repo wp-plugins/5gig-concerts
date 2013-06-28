@@ -421,7 +421,7 @@ function admin_tags5gig_options(){
 	<b>5gig API key</b><br/>
 	<?=__('This code is necessary to query our database', 'tags5gig')?>
 	<br/><br/>
-	<input size="40" name="nvivo_key" value="<?=get_option('nvivo_key')?>"/> <a href="http://api.5gig.com/plans" target="_blank"><?=__('Get an API key', 'tags5gig')?></a>
+	<input size="40" name="nvivo_key" value="<?=get_option('nvivo_key')?>"/> <a href="http://api.5gig.com/signup" target="_blank"><?=__('Get an API key', 'tags5gig')?></a>
 	<br/><br/><br/>
 	
 	<b>google API key</b><br/>

@@ -36,7 +36,7 @@ http://www.5gig.co.uk
 3. Activate the plugin
 
 4. Go to section Settings > 5gig Concerts, there you write down your 5gig api key
-http://api.5gig.com/plans
+http://api.5gig.com/signup
 
 5. If you want that in the events you show to add a map of where the concert takes place, add the api key that Google supplies
 http://code.google.com/intl/es-ES/apis/maps/signup.html
