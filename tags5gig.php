@@ -4,7 +4,7 @@
 Plugin Name: 5gig Concerts
 Plugin URI: http://5gig.com
 Description: Search and show information about concerts
-Version: 1.2
+Version: 1.3
 Author: nvivo Internet S.L
 Author URI: http://www.5gig.com/
 */
